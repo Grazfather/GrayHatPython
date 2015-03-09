@@ -84,7 +84,7 @@ class debugger():
         if kernel32.WaitForDebugEvent(byref(debug_event), INFINITE):
             # Let's obtain the thread and context information
             self.h_thread = self.open_thread(debug_event.dwThreadId)
-            self.context = self.get_thread_context(self.h_thread)
+            self.context = self.get_thread_context(h_thread=self.h_thread)
             print "Event Code: %d Thread ID: %d" % (debug_event.dwDebugEventCode,
                                                     debug_event.dwThreadId)
             # If the event code is an exception, we want to
