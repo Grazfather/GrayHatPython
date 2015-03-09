@@ -61,7 +61,6 @@ class debugger():
 
     def attach(self, pid):
         self.h_process = self.open_process(pid)
-        print self.h_process
         # We attempt to attach to the process
         # if this fails we exit the call
         if kernel32.DebugActiveProcess(pid):
@@ -71,7 +70,7 @@ class debugger():
             print "[*] Unable to attach to the process."
 
     def run(self):
-        # Now we have to pull the debuggee for
+        # Now we have to poll the debuggee for
         # debugging events
 
         while self.debugger_active == True:
@@ -101,7 +100,7 @@ class debugger():
                 elif exception == EXCEPTION_BREAKPOINT:
                     continue_status = self.exception_handler_breakpoint()
                 elif exception == EXCEPTION_GUARD_PAGE:
-                    print "Guard Page Access Dected."
+                    print "Guard Page Access Detected."
                 elif exception == EXCEPTION_SINGLE_STEP:
                     print "Single Stepping."
 
