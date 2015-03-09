@@ -10,8 +10,9 @@ class debugger():
         self.debugger_active = False
         self.h_thread = None
         self.context = None
-        self.exception = None
         self.exception_address = None
+        self.breakpoints = {}
+        self.first_breakpoint = True
 
     def load(self, path_to_exe):
 
@@ -159,7 +160,79 @@ class debugger():
         else:
             return False
 
+    def read_process_memory(self, address, length):
+        data = ""
+        read_buf = create_string_buffer(length)
+        count = c_ulong(0)
+
+        if not kernel32.ReadProcessMemory(self.h_process, address, read_buf,
+                                          length, byref(count)):
+            return False
+        else:
+            data += read_buf.raw
+            return data
+
+    def write_process_memory(self, address, data):
+        count = c_ulong(0)
+        length = len(data)
+        c_data = c_char_p(data[count.value:])
+
+        if not kernel32.WriteProcessMemory(self.h_process, address, c_data,
+                                           length, byref(count)):
+            return False
+        else:
+            return True
+
+    def bp_set(self, address):
+        print "[*] Setting breakpoint at: 0x%08x" % address
+        if not self.breakpoints.has_key(address):
+            try:
+                # store the original byte
+                original_byte = self.read_process_memory(address, 1)
+
+                # write the INT3 opcode
+                self.write_process_memory(address, "\xCC")
+
+                # register the breakpoint in our internal list
+                self.breakpoints[address] = (original_byte)
+            except:
+                return False
+
+        return True
+
     def exception_handler_breakpoint(self):
-        print "[*] Inside the breakpoint handler."
-        print "Exception Address: 0x%08x" % self.exception_address
-        return DBG_CONTINUE
+        print "[*] Exception Address: 0x%08x" % self.exception_address
+        # check if the breakpoint is one that we set
+        if not self.breakpoints.has_key(self.exception_address):
+            # if it is the first Windows driven breakpoint
+            # then let's just continue on
+            if self.first_breakpoint == True:
+                self.first_breakpoint = False
+                print "[*] Hit the first breakpoint."
+                return DBG_CONTINUE
+
+        else:
+            print "[*] Hit user defined breakpoint."
+            # this is where we handle the breakpoints we set
+            # first put the original byte back
+            self.write_process_memory(self.exception_address, self.breakpoints[self.exception_address])
+
+            # obtain a fresh context record, reset EIP back to the
+            # original byte and then set the thread's context record
+            # with the new EIP value
+            self.context = self.get_thread_context(h_thread=self.h_thread)
+            self.context.Eip -= 1
+
+            kernel32.SetThreadContext(self.h_thread,byref(self.context))
+
+            continue_status = DBG_CONTINUE
+
+        return continue_status
+
+    def func_resolve(self, dll, function):
+        handle = kernel32.GetModuleHandleA(dll)
+        address = kernel32.GetProcAddress(handle, function)
+
+        kernel32.CloseHandle(handle)
+
+        return address
