@@ -1,5 +1,4 @@
 import my_debugger
-from my_debugger_defines import *
 
 debugger = my_debugger.debugger()
 
@@ -9,5 +8,5 @@ debugger.attach(int(pid))
 printf_address = debugger.func_resolve("msvcrt.dll", "printf")
 print "[*] Address of printf: 0x%08x" % printf_address
 
-debugger.bp_set_hw(printf_address, 1, HW_EXECUTE)
+debugger.bp_set_mem(printf_address, 10)
 debugger.run()
