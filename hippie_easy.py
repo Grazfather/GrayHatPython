@@ -18,8 +18,8 @@ def getRet(imm, allocaddr, max_opcodes=300):
     return 0x0
 
 # A simple wrapper to just print out the hook
-# results in a friendly manner, it simple checks the hook
-# address against the stored addresses for RtlAllocateHeap, RtlFreeHeap
+# results in a friendly manner, it simply checks the hook address
+# against the stored addresses for RtlAllocateHeap, RtlFreeHeap.
 def showresult(imm, a, rtlallocate, extra=""):
     if a[0] == rtlallocate:
         imm.log("RtlAllocateHeap(0x%08x, 0x%08x, 0x%08x) <- 0x%08x %s" %

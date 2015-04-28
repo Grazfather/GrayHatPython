@@ -7,7 +7,7 @@ class barley_amount(Union):
         ("barley_char", c_char * 8),
     ]
 
-value = raw_input("Enter the amount of barlye to put into the beer vat:")
+value = raw_input("Enter the amount of barley to put into the beer vat:")
 my_barley = barley_amount(int(value))
 print "Barley amount as a long: %ld" % my_barley.barley_long
 print "Barley amount as an int: %d" % my_barley.barley_int

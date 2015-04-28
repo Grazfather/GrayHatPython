@@ -12,7 +12,7 @@ pid = int(sys.argv[1])
 pid_to_kill = sys.argv[2]
 
 if not sys.argv[1] or not sys.argv[2]:
-    print "Code Ijector: ./code_injector.py <PID to inject> <PID to kill>"
+    print "Code Injector: ./code_injector.py <PID to inject> <PID to kill>"
     sys.exit(0)
 
 #/* win32_exec -  EXITFUNC=thread CMD=cmd.exe /c taskkill /PID AAAA
